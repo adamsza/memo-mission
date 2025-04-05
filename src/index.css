@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+@theme {
+  --color-card-top: rgba(220, 220, 220, 0.1);
+  --color-card-bottom: rgba(223, 190, 156, 0.1);
+  --color-backdrop: rgba(0, 0, 0, 0.5);
+
+  --font-gilroy: Gilroy;
+  --font-gilroy-black: Gilroy-Black;
+  --font-gilroy-bold: Gilroy-Bold;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -17,11 +27,28 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  display: block;
   min-width: 320px;
   min-height: 100vh;
 }
+
+@font-face {
+  font-family: "Gilroy";
+  src: local("Gilroy"),
+   url("./assets/fonts/Gilroy-Regular.ttf") format("truetype");
+ }
+
+@font-face {
+  font-family: "Gilroy-Black";
+  src: local("Gilroy-Black"),
+   url("./assets/fonts/Gilroy-Black.ttf") format("truetype");
+ }
+
+@font-face {
+  font-family: "Gilroy-Bold";
+  src: local("Gilroy-Bold"),
+   url("./assets/fonts/Gilroy-Bold.ttf") format("truetype");
+ }
 
 @media (prefers-color-scheme: light) {
   :root {
