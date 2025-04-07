@@ -8,15 +8,22 @@ import { animalEmojis } from './data/emojis';
 import useTimer from './hooks/useTimer';
 import SettingsModal from './components/SettingsModal';
 
+export interface GameSettings {
+  cards: number,
+  time: number
+}
+
 function App() {
-  const [cards, setCards] = useState(shuffle(createCards(animalEmojis.slice(0, 12))));
+  const [gameSettings, setGameSettings] = useState<GameSettings>({ cards: 12, time: 60 })
+  const [cards, setCards] = useState(shuffle(createCards(animalEmojis.slice(0, gameSettings.cards))));
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
-  const [foundPairs, setFoundPairs] = useState(0);
+  const [foundCards, setFoundCards] = useState<number[]>([]);
   const [mistakes, setMistakes] = useState(0);
-  const timer = useTimer({ time: 60 });
+  const timer = useTimer({ time: gameSettings.time });
   const [modal, setModal] = useState(false);
   const handleCardClick = useCallback((id: number) => {
     if (!timer.timerActive) startGame();
+    if (foundCards.includes(id) || flippedIds.length > 1) return;
     setCards(cards.map(card =>
       card.id === id ? new Card(card.id, card.emoji, true) : card
     )
@@ -25,28 +32,30 @@ function App() {
   }, [cards, flippedIds])
 
   function startGame() {
-    timer.startTimer();
+    if (timer.remainingTime === gameSettings.time)
+      timer.startTimer();
   }
 
   function stopGame() {
     timer.stopTimer();
   }
 
-  function restartGame() {
+  function resetGame() {
     stopGame();
-    timer.setTimer(60);
+    timer.setTimer(gameSettings.time);
     setMistakes(0);
-    setFoundPairs(0);
+    setFoundCards([]);
     setFlippedIds([]);
-    setCards(shuffle(createCards(animalEmojis.slice(0, 12))))
+    setCards(shuffle(createCards(animalEmojis.slice(0, gameSettings.cards))))
   }
 
   useEffect(() => {
     if (flippedIds.length > 1) {
       const flippedCards = flippedIds.map(id => cards.find(card => card.id === id));
       if (flippedCards[0]?.emoji === flippedCards[1]?.emoji) {
-        setFoundPairs(foundPairs + 1);
-        if (foundPairs + 1 === cards.length / 2) stopGame();
+        setFoundCards(prevState => [...prevState, ...flippedIds.slice(0, 2)]);
+        setFlippedIds([])
+        if (foundCards.length + 2 === cards.length) stopGame();
       }
       else {
         setMistakes(mistakes + 1);
@@ -54,19 +63,24 @@ function App() {
           setCards(cards.map(card =>
             flippedIds.includes(card.id) ? new Card(card.id, card.emoji, false) : card
           ));
-        }, 3000);
+          setFlippedIds([])
+        }, 2000);
       }
-      setFlippedIds([]) //only shift the first two
     }
-  }, [flippedIds])
+  }, [flippedIds]);
+
+  useEffect(() => {
+    resetGame();
+  }, [gameSettings]);
+
 
   return (
     <div className="pt-7.5 pb-12.5 px-12.5">
       <GameContext.Provider value={{
         mistakes: mistakes,
-        matches: foundPairs,
+        matches: foundCards.length / 2,
         remainingTime: timer.remainingTime,
-        restartGame: restartGame,
+        restartGame: resetGame,
         openSettings: () => setModal(true)
       }}>
         <Header />
@@ -74,7 +88,14 @@ function App() {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 bg-[#F5F5F5] py-18.75 px-6.25 rounded-[50px]">
         {cards.map(card => <CardBody key={card.id} card={card} onClick={handleCardClick} />)}
       </div>
-      {modal ? <SettingsModal /> : <></>}
+      {modal ? <SettingsModal
+        handleClose={() => setModal(false)}
+        gameSettings={gameSettings}
+        changeSettings={(gameSettings) => {
+          setGameSettings(gameSettings);
+          setModal(false);
+        }} />
+        : <></>}
     </div>
   )
 }
