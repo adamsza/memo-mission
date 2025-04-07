@@ -8,6 +8,10 @@
   --font-gilroy: Gilroy;
   --font-gilroy-black: Gilroy-Black;
   --font-gilroy-bold: Gilroy-Bold;
+
+  --breakpoint-sm: 460px;
+  --breakpoint-md: 560px;
+  --breakpoint-lg: 780px;
 }
 
 :root {

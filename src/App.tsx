@@ -2,44 +2,79 @@ import { useCallback, useEffect, useState } from 'react';
 import { Header } from './Header'
 import Card from './components/Card';
 import CardBody from './components/CardBody';
-const emojis = ["🦊", "🐶", "🐱", "🐹", "🐰", "🐵", "🐻", "🐼", "🐨", "🐯", "🦁", "🐷"];
+import { shuffle } from './utils/ShuffleAlgorithm';
+import { GameContext } from './context/GameConext';
+import { animalEmojis } from './data/emojis';
+import useTimer from './hooks/useTimer';
+import SettingsModal from './components/SettingsModal';
 
 function App() {
-  const [cards, setCards] = useState(shuffle(createCards(emojis)));
+  const [cards, setCards] = useState(shuffle(createCards(animalEmojis.slice(0, 12))));
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [foundPairs, setFoundPairs] = useState(0);
+  const [mistakes, setMistakes] = useState(0);
+  const timer = useTimer({ time: 60 });
+  const [modal, setModal] = useState(false);
   const handleCardClick = useCallback((id: number) => {
+    if (!timer.timerActive) startGame();
     setCards(cards.map(card =>
-        card.id === id ? new Card(card.id, card.emoji, true) : card
-      )
+      card.id === id ? new Card(card.id, card.emoji, true) : card
+    )
     );
     setFlippedIds([...flippedIds, id]);
   }, [cards, flippedIds])
 
+  function startGame() {
+    timer.startTimer();
+  }
+
+  function stopGame() {
+    timer.stopTimer();
+  }
+
+  function restartGame() {
+    stopGame();
+    timer.setTimer(60);
+    setMistakes(0);
+    setFoundPairs(0);
+    setFlippedIds([]);
+    setCards(shuffle(createCards(animalEmojis.slice(0, 12))))
+  }
+
   useEffect(() => {
-    console.log(flippedIds);
-    if(flippedIds.length > 1){
+    if (flippedIds.length > 1) {
       const flippedCards = flippedIds.map(id => cards.find(card => card.id === id));
-      if(flippedCards[0]?.emoji === flippedCards[1]?.emoji){
-        setFoundPairs(foundPairs+1);
+      if (flippedCards[0]?.emoji === flippedCards[1]?.emoji) {
+        setFoundPairs(foundPairs + 1);
+        if (foundPairs + 1 === cards.length / 2) stopGame();
       }
-      else{
+      else {
+        setMistakes(mistakes + 1);
         setTimeout(() => {
-          setCards(cards.map(card => 
+          setCards(cards.map(card =>
             flippedIds.includes(card.id) ? new Card(card.id, card.emoji, false) : card
           ));
         }, 3000);
       }
-      setFlippedIds([]) 
+      setFlippedIds([]) //only shift the first two
     }
   }, [flippedIds])
 
   return (
     <div className="pt-7.5 pb-12.5 px-12.5">
-      <Header />
-      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 bg-[#F5F5F5] py-18.75 px-6.25 rounded-[50px]">
+      <GameContext.Provider value={{
+        mistakes: mistakes,
+        matches: foundPairs,
+        remainingTime: timer.remainingTime,
+        restartGame: restartGame,
+        openSettings: () => setModal(true)
+      }}>
+        <Header />
+      </GameContext.Provider>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 bg-[#F5F5F5] py-18.75 px-6.25 rounded-[50px]">
         {cards.map(card => <CardBody key={card.id} card={card} onClick={handleCardClick} />)}
       </div>
+      {modal ? <SettingsModal /> : <></>}
     </div>
   )
 }
@@ -51,15 +86,6 @@ function createCards(emojis: string[]) {
     arr.push(card1, card2);
     return arr;
   }, [])
-}
-
-//Fisher-Yates (Knuth) Shuffle algorithm
-function shuffle<T>(array: T[]): T[] {
-  for (let i = array.length - 1; i > 0; i--) {
-    const random = Math.floor(Math.random() * (i + 1));
-    [array[i], array[random]] = [array[random], array[i]];
-  }
-  return array;
 }
 
 export default App
