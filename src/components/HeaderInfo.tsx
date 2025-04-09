@@ -1,4 +1,4 @@
-import { useGameContext } from "../context/GameConext"
+import { useGameContext } from "../context/GameContext"
 
 export function HeaderInfo() {
     const gameState = useGameContext()

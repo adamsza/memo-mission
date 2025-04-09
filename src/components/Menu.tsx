@@ -1,12 +1,12 @@
 import { faGear, faRepeat } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useGameContext } from "../context/GameConext";
+import { useGameContext } from "../context/GameContext";
 
-export function Menu() {
+export function Menu({openSettings}: {openSettings: () => void}) {
     const gameState = useGameContext();
     return (
         <div className="w-fit">
-            <FontAwesomeIcon className="text-[#D5D5D5] text-2xl p-2.5 pr-5 border-r-1 border-[#D5D5D5]" icon={faGear} onClick={gameState.openSettings}/>
+            <FontAwesomeIcon className="text-[#D5D5D5] text-2xl p-2.5 pr-5 border-r-1 border-[#D5D5D5]" icon={faGear} onClick={openSettings}/>
             <FontAwesomeIcon className="text-[#D5D5D5] text-2xl p-2.5 pl-5" icon={faRepeat} onClick={gameState.restartGame}/>
         </div>
     )

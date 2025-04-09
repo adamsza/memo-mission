@@ -1,10 +1,10 @@
 import logo from "./assets/logo.svg";
 import { HeaderInfo } from "./components/HeaderInfo";
 import { Menu } from "./components/Menu";
-import useWindowSize from "./hooks/UseWindowSize";
+import useWindowSize from "./hooks/useWindowSize";
 
 
-export function Header() {
+export function Header({openSettings} : {openSettings: () => void}) {
     const windowSize = useWindowSize();
 
     return (
@@ -13,13 +13,13 @@ export function Header() {
                 <div className="grid justify-between grid-flow-col items-center">
                     <img src={logo} />
                     <HeaderInfo />
-                    <Menu/>
+                    <Menu openSettings={openSettings}/>
                 </div>
                 :
                 <div>
                     <div className="grid justify-end grid-flow-col items-center">
                         <img src={logo} />
-                        <Menu/>
+                        <Menu openSettings={openSettings}/>
                     </div>
                     <div className="flex justify-center">
                         <HeaderInfo />
