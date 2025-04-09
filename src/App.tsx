@@ -19,8 +19,8 @@ function App() {
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [foundCards, setFoundCards] = useState<number[]>([]);
   const [mistakes, setMistakes] = useState(0);
-  const timer = useTimer({ time: gameSettings.time });
   const [modal, setModal] = useState(false);
+  const timer = useTimer({ time: gameSettings.time, timerEndedCallback: stopGame });
   const handleCardClick = useCallback((id: number) => {
     if (!timer.timerActive) startGame();
     if (foundCards.includes(id) || flippedIds.length > 1) return;
@@ -30,6 +30,7 @@ function App() {
     );
     setFlippedIds([...flippedIds, id]);
   }, [cards, flippedIds])
+
 
   function startGame() {
     if (timer.remainingTime === gameSettings.time)
@@ -42,7 +43,7 @@ function App() {
 
   function resetGame() {
     stopGame();
-    timer.setTimer(gameSettings.time);
+    timer.resetTimer();
     setMistakes(0);
     setFoundCards([]);
     setFlippedIds([]);

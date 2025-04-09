@@ -1,15 +1,16 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface TimerInterface {
     remainingTime: number,
     timerActive: boolean,
     startTimer: () => void,
     stopTimer: () => void,
-    setTimer: (time: number) => void,
+    resetTimer: () => void,
 }
 
 interface TimerProps{
-    time: number
+    time: number,
+    timerEndedCallback: () => void
 }
 
 export default function useTimer(props: TimerProps): TimerInterface {
@@ -19,9 +20,9 @@ export default function useTimer(props: TimerProps): TimerInterface {
 
     function startTimer() {
         clearInterval(timerRef.current);
-        setTimerActive(false);
+        setTimerActive(true);
         timerRef.current = setInterval(() => {
-            setRemainingTime(prevRemainingTime => prevRemainingTime - 1)
+            setRemainingTime(prevRemainingTime => prevRemainingTime - 1);
         }, 1000);
     }
 
@@ -30,15 +31,19 @@ export default function useTimer(props: TimerProps): TimerInterface {
         clearInterval(timerRef.current);
     }
 
-    function setTimer(time: number) {
-        setRemainingTime(time);
+    function resetTimer() {
+        setRemainingTime(props.time);
     }
+
+    useEffect(()=>{
+        if(remainingTime === 0) props.timerEndedCallback();
+    }, [props, remainingTime]);
 
     return {
         remainingTime,
         timerActive,
         startTimer,
         stopTimer,
-        setTimer
+        resetTimer
     }
 }
