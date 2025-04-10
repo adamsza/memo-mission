@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import Card from "./Card";
+import Card from "../types/Card";
 import CardBack from "./CardBack";
 import CardFront from "./CardFront";
 

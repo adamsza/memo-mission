@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Header } from './Header'
 import SettingsModal from './components/SettingsModal';
 import GameBoard from './GameBoard';
-import Game, { GameSettings } from './Game';
+import Game from './Game';
 import { Provider } from 'react-redux';
 import { store } from './stores/store';
+import GameSettings from './types/GameSettings';
 
 function App() {
   const [gameSettings, setGameSettings] = useState<GameSettings>({ cards: 12, time: 60 })

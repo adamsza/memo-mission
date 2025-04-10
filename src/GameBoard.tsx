@@ -1,5 +1,5 @@
 import CardBody from "./components/CardBody"
-import { useGameContext } from "./context/GameContext"
+import { useGameContext } from "./context/GameContext";
 
 function GameBoard() {
     const {cards, handleCardClick} = useGameContext();

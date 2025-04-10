@@ -4,11 +4,7 @@ import { GameContext } from './context/GameContext';
 import { useGameState } from './hooks/useGameState';
 import { useDispatch } from 'react-redux';
 import { decreaseScore, increaseScore, resetScore } from './stores/gameSlice';
-
-export interface GameSettings {
-    cards: number,
-    time: number
-}
+import GameSettings from './types/GameSettings';
 
 function Game({ gameSettings, children }: { gameSettings: GameSettings, children: ReactNode }) {
     const { cards, flippedIds, foundCards, mistakes, gameOver, resetGame, matchCards, addMistake, flipCard, endGame } = useGameState({ gameSettings });

@@ -1,10 +1,10 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { GameSettings } from "../Game";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../stores/store";
 import { changeName } from "../stores/userSlice";
+import GameSettings from "../types/GameSettings";
 
 interface SettingsModalProps{
     handleClose: () => void,
