@@ -25,19 +25,19 @@ export default function useTimer(props: TimerProps): TimerInterface {
             setRemainingTime(prevRemainingTime => prevRemainingTime - 1);
         }, 1000);
     }
-
+    
     function stopTimer() {
         setTimerActive(false);
         clearInterval(timerRef.current);
     }
-
+    
     function resetTimer() {
         setRemainingTime(props.time);
     }
-
+    
     useEffect(()=>{
         if(remainingTime === 0) props.timerEndedCallback();
-    }, [props, remainingTime]);
+    }, [remainingTime]);
 
     return {
         remainingTime,
