@@ -12,30 +12,30 @@ function Game({ gameSettings, children }: { gameSettings: GameSettings, children
     const {cards, flippedIds, foundCards, mistakes, gameOver, resetGame, matchCards, addMistake, flipCard, endGame} = useGameState({gameSettings});
     const handleCardClick = useCallback((id: number) => {
         if (gameOver) return;
-        if (foundCards.includes(id) || flippedIds.length > 1) return;
+        if (foundCards.includes(id) || flippedIds.includes(id) || flippedIds.length > 1) return;
         if (!timer.timerActive) startGame();
         flipCard(id);
-    }, [flippedIds])
-
-
+    }, [flippedIds, gameOver])
+    
+    
     function startGame() {
         if (timer.remainingTime === gameSettings.time)
             timer.startTimer();
     }
-
+    
     const stopGame = useCallback(() => {
         timer.stopTimer();
         endGame();
     }, []);
-
+    
     const timer = useTimer({ time: gameSettings.time, timerEndedCallback: stopGame });
-
+    
     function restartGame() {
         stopGame();
         timer.resetTimer();
         resetGame();
     }
-
+    
     useEffect(() => {
         if (flippedIds.length > 1) {
             const flippedCards = flippedIds.map(id => cards.find(card => card.id === id));
@@ -46,7 +46,7 @@ function Game({ gameSettings, children }: { gameSettings: GameSettings, children
             else addMistake();
         }
     }, [flippedIds]);
-
+    
     useEffect(() => {
         restartGame();
     }, [gameSettings]);
