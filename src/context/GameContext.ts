@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import Card from "../components/Card";
 
-export interface GameState{
+export interface GameStats{
     cards: Card[],
     mistakes: number,
     matches: number,
@@ -10,7 +10,7 @@ export interface GameState{
     handleCardClick: (id: number) => void
 }
 
-export const GameContext = createContext<GameState | undefined>(undefined);
+export const GameContext = createContext<GameStats | undefined>(undefined);
 
 export function useGameContext() {
     const gameStats = useContext(GameContext);
