@@ -5,7 +5,7 @@ import { animalEmojis } from "../data/emojis";
 import GameSettings from "../types/GameSettings";
 
 export function useGameState({ gameSettings }: { gameSettings: GameSettings }) {
-    const [cards, setCards] = useState<Card[]>(shuffle(createCards(animalEmojis.slice(0, gameSettings.cards))));
+    const [cards, setCards] = useState<Card[]>([]);
     const [flippedIds, setFlippedIds] = useState<number[]>([]);
     const [foundCards, setFoundCards] = useState<number[]>([]);
     const [mistakes, setMistakes] = useState<number>(0);
