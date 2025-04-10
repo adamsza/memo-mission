@@ -15,6 +15,7 @@ interface SettingsModalProps{
 function SettingsModal(props: SettingsModalProps) {
     const [cards, setCards] = useState(props.gameSettings.cards);
     const [time, setTime] = useState(props.gameSettings.time);
+    const [maxMistakes, setMaxMistakes] = useState(props.gameSettings.maxMistakes);
     const name = useSelector((state: RootState) => state.user.name);
     const dispatch = useDispatch();
 
@@ -41,8 +42,13 @@ function SettingsModal(props: SettingsModalProps) {
                         <input className="w-12.5 h-10.25 box-border py-2.5 border-1 border-[#D5D5D5] rounded-[10px] font-gilroy text-lg text-center" 
                         value={time} onChange={(e) => setTime(parseInt(e.currentTarget.value) || 0)}/>
                     </div>
+                    <div className="flex justify-between items-center">
+                        <div className="font-gilroy-bold text-lg">Allowed bad guesses</div>
+                        <input className="w-12.5 h-10.25 box-border py-2.5 border-1 border-[#D5D5D5] rounded-[10px] font-gilroy text-lg text-center" 
+                        value={maxMistakes} onChange={(e) => setMaxMistakes(parseInt(e.currentTarget.value) || 0)}/>
+                    </div>
                     <button className="w-full bg-[#FF3F56] rounded-[30px] py-3.75 px-5 text-white uppercase font-gilroy-bold text-[16px]"
-                        onClick={() => props.changeSettings({cards: cards, time: time})}>Save settings</button>
+                        onClick={() => props.changeSettings({cards: cards, time: time, maxMistakes: maxMistakes})}>Save settings</button>
                 </div>
             </div>
         </div>

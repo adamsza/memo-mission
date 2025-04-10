@@ -8,7 +8,7 @@ import { store } from './stores/store';
 import GameSettings from './types/GameSettings';
 
 function App() {
-  const [gameSettings, setGameSettings] = useState<GameSettings>({ cards: 12, time: 60 })
+  const [gameSettings, setGameSettings] = useState<GameSettings>({ cards: 12, time: 60, maxMistakes: 16 })
   const [modal, setModal] = useState(false);
 
   return (

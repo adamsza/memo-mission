@@ -45,6 +45,7 @@ function Game({ gameSettings, children }: { gameSettings: GameSettings, children
             }
             else {
                 addMistake();
+                if(mistakes + 1 === gameSettings.maxMistakes) stopGame();
                 dispatch(decreaseScore(10));
             }
         }
