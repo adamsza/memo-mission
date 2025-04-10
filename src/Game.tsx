@@ -2,6 +2,8 @@ import { ReactNode, useCallback, useEffect } from 'react';
 import useTimer from './hooks/useTimer';
 import { GameContext } from './context/GameContext';
 import { useGameState } from './hooks/useGameState';
+import { useDispatch } from 'react-redux';
+import { decreaseScore, increaseScore, resetScore } from './stores/gameSlice';
 
 export interface GameSettings {
     cards: number,
@@ -9,47 +11,57 @@ export interface GameSettings {
 }
 
 function Game({ gameSettings, children }: { gameSettings: GameSettings, children: ReactNode }) {
-    const {cards, flippedIds, foundCards, mistakes, gameOver, resetGame, matchCards, addMistake, flipCard, endGame} = useGameState({gameSettings});
+    const { cards, flippedIds, foundCards, mistakes, gameOver, resetGame, matchCards, addMistake, flipCard, endGame } = useGameState({ gameSettings });
+    const dispatch = useDispatch();
     const handleCardClick = useCallback((id: number) => {
         if (gameOver) return;
         if (foundCards.includes(id) || flippedIds.includes(id) || flippedIds.length > 1) return;
         if (!timer.timerActive) startGame();
         flipCard(id);
     }, [flippedIds, gameOver])
-    
-    
+
     function startGame() {
         if (timer.remainingTime === gameSettings.time)
             timer.startTimer();
     }
-    
+
     const stopGame = useCallback(() => {
         timer.stopTimer();
         endGame();
     }, []);
-    
+
     const timer = useTimer({ time: gameSettings.time, timerEndedCallback: stopGame });
-    
+
     function restartGame() {
         stopGame();
         timer.resetTimer();
         resetGame();
+        dispatch(resetScore());
     }
-    
+
     useEffect(() => {
         if (flippedIds.length > 1) {
             const flippedCards = flippedIds.map(id => cards.find(card => card.id === id));
             if (flippedCards[0]?.emoji === flippedCards[1]?.emoji) {
                 matchCards();
+                dispatch(increaseScore(50));
                 if (foundCards.length + 2 === cards.length) stopGame();
             }
-            else addMistake();
+            else {
+                addMistake();
+                dispatch(decreaseScore(10));
+            }
         }
     }, [flippedIds]);
-    
+
     useEffect(() => {
         restartGame();
     }, [gameSettings]);
+
+    useEffect(() => {
+        if (gameOver === true)
+            dispatch(increaseScore(timer.remainingTime * (gameSettings.time / 60) * 10));
+    }, [gameOver])
 
     return (
         <GameContext.Provider value={{
