@@ -1,7 +1,7 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { GameSettings } from "../App";
 import { useState } from "react";
+import { GameSettings } from "../Game";
 
 interface SettingsModalProps{
     handleClose: () => void,
@@ -13,7 +13,7 @@ function SettingsModal(props: SettingsModalProps) {
     const [cards, setCards] = useState(props.gameSettings.cards);
     const [time, setTime] = useState(props.gameSettings.time);
     return (
-        <div className="fixed top-0 left-0 w-lvw h-lvh bg-backdrop">
+        <div className="fixed top-0 left-0 w-lvw h-lvh bg-backdrop z-10">
             <div className="flex flex-col w-[300px] h-[275px] m-auto mt-15 rounded-[35px] bg-white overflow-hidden">
                 <div className="flex justify-between items-center bg-[#F5F5F5] py-6.25 px-5">
                     <div className="font-gilroy-black text-2xl leading-4.25">Game settings</div>
