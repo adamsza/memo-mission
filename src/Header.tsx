@@ -17,7 +17,7 @@ export function Header({openSettings} : {openSettings: () => void}) {
                 </div>
                 :
                 <div>
-                    <div className="grid justify-end grid-flow-col items-center">
+                    <div className="grid justify-between grid-flow-col items-center">
                         <img src={logo} />
                         <Menu openSettings={openSettings}/>
                     </div>

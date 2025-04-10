@@ -12,6 +12,8 @@
   --breakpoint-sm: 460px;
   --breakpoint-md: 560px;
   --breakpoint-lg: 780px;
+  --breakpoint-xl: 1020px;
+  --breakpoint-2xl: 1260px;
 }
 
 :root {

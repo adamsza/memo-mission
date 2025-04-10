@@ -12,7 +12,7 @@ function App() {
   const [modal, setModal] = useState(false);
 
   return (
-    <div className="pt-7.5 pb-12.5 px-12.5">
+    <div className="flex flex-col gap-7.5 pt-7.5 pb-12.5 px-12.5">
       <Provider store={store}>
         <Game gameSettings={gameSettings}>
           <Header openSettings={() => setModal(true)} />
