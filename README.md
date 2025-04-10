@@ -1,5 +1,5 @@
 ## Memo mission
-A memory game built with React.
+A memory game built with React. The game can be played here: [Memo mission](https://memo-mission.vercel.app/)
 
 ### Setup
 To install packages after cloning the repository, run:
