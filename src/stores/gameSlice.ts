@@ -3,6 +3,7 @@ import Card from "../types/Card";
 import { shuffle } from "../utils/ShuffleAlgorithm";
 import { animalEmojis } from "../data/emojis";
 import GameState from "../types/GameState";
+import GameSettings from "../types/GameSettings";
 
 const initialState: GameState = {
     score: 0,
@@ -10,7 +11,12 @@ const initialState: GameState = {
     flippedIds: [],
     foundCards: [],
     mistakes: 0,
-    gameOver: true
+    gameOver: true,
+    settings: {
+        cards: 12,
+        time: 60,
+        maxMistakes: 16
+    }
 }
 
 function createCards(emojis: string[]) {
@@ -32,7 +38,7 @@ const gameSlice = createSlice({
         },
         endGame: (state, action: PayloadAction<number>) => {
             state.gameOver = true;
-            state.score += action.payload //* (gamesettings.time / 60) * 10;
+            state.score += action.payload * (state.settings.time / 60) * 10;
         },
         resetGame: (state, action: PayloadAction<number>) => {
             state.gameOver = false;
@@ -57,6 +63,9 @@ const gameSlice = createSlice({
         flipCardsBack: (state) => {
             state.cards = state.cards.map(card => state.flippedIds.includes(card.id) ? { ...card, flipped: false } : card);
             state.flippedIds = []
+        },
+        changeSettings: (state, action: PayloadAction<GameSettings>) => {
+            state.settings = action.payload
         }
     }
 })
@@ -68,7 +77,8 @@ export const {
     matchCards,
     addMistake,
     flipCard,
-    flipCardsBack
+    flipCardsBack,
+    changeSettings
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

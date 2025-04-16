@@ -3,12 +3,10 @@ import useTimer from './hooks/useTimer';
 import { GameContext } from './context/GameContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetScore, resetGame, endGame, flipCard, matchCards, addMistake, flipCardsBack } from './stores/gameSlice';
-import GameSettings from './types/GameSettings';
 import { RootState } from './stores/store';
 
-function Game({ gameSettings, children }: { gameSettings: GameSettings, children: ReactNode }) {
-    //const { cards, flippedIds, foundCards, mistakes, gameOver, resetGame, matchCards, addMistake, flipCard, endGame } = useGameState({ gameSettings });
-    const { gameOver, mistakes, flippedIds, foundCards, cards } = useSelector((state: RootState) => state.game);
+function Game({ children }: { children: ReactNode }) {
+    const { gameOver, mistakes, flippedIds, foundCards, cards, settings } = useSelector((state: RootState) => state.game);
     const dispatch = useDispatch();
 
     const stopGame = useCallback(() => {
@@ -16,12 +14,12 @@ function Game({ gameSettings, children }: { gameSettings: GameSettings, children
         dispatch(endGame(timer.remainingTime));
     }, [dispatch]);
 
-    const timer = useTimer({ time: gameSettings.time, timerEndedCallback: stopGame });
+    const timer = useTimer({ time: settings.time, timerEndedCallback: stopGame });
 
     const startGame = useCallback(() => {
-        if (timer.remainingTime === gameSettings.time)
+        if (timer.remainingTime === settings.time)
             timer.startTimer();
-    }, [gameSettings, timer]);
+    }, [settings, timer]);
 
     const handleCardClick = useCallback((id: number) => {
         if (gameOver) return;
@@ -33,7 +31,7 @@ function Game({ gameSettings, children }: { gameSettings: GameSettings, children
     const restartGame = useCallback(() => {
         stopGame();
         timer.resetTimer();
-        dispatch(resetGame(gameSettings.cards));
+        dispatch(resetGame(settings.cards));
         dispatch(resetScore());
     }, [dispatch, stopGame]);
 
@@ -49,14 +47,14 @@ function Game({ gameSettings, children }: { gameSettings: GameSettings, children
                 setTimeout(() => {
                     dispatch(flipCardsBack());
                 }, 1000);
-                if (mistakes + 1 === gameSettings.maxMistakes) stopGame();
+                if (mistakes + 1 === settings.maxMistakes) stopGame();
             }
         }
     }, [cards, dispatch, flippedIds, stopGame]);
 
     useEffect(() => {
         restartGame();
-    }, [gameSettings, restartGame]);
+    }, [settings, restartGame]);
 
     return (
         <GameContext.Provider value={{

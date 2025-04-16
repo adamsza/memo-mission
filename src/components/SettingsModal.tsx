@@ -4,18 +4,17 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../stores/store";
 import { changeName } from "../stores/userSlice";
-import GameSettings from "../types/GameSettings";
+import { changeSettings } from "../stores/gameSlice";
 
 interface SettingsModalProps{
-    handleClose: () => void,
-    gameSettings: GameSettings,
-    changeSettings: (gamesettings: GameSettings) => void
+    handleClose: () => void
 }
 
 function SettingsModal(props: SettingsModalProps) {
-    const [cards, setCards] = useState(props.gameSettings.cards);
-    const [time, setTime] = useState(props.gameSettings.time);
-    const [maxMistakes, setMaxMistakes] = useState(props.gameSettings.maxMistakes);
+    const settings = useSelector((state: RootState) => state.game.settings);
+    const [cards, setCards] = useState(settings.cards);
+    const [time, setTime] = useState(settings.time);
+    const [maxMistakes, setMaxMistakes] = useState(settings.maxMistakes);
     const name = useSelector((state: RootState) => state.user.name);
     const dispatch = useDispatch();
 
@@ -48,7 +47,10 @@ function SettingsModal(props: SettingsModalProps) {
                         value={maxMistakes} onChange={(e) => setMaxMistakes(parseInt(e.currentTarget.value) || 0)}/>
                     </div>
                     <button className="w-full bg-[#FF3F56] rounded-[30px] py-3.75 px-5 text-white uppercase font-gilroy-bold text-[16px]"
-                        onClick={() => props.changeSettings({cards: cards, time: time, maxMistakes: maxMistakes})}>Save settings</button>
+                        onClick={() => {
+                            dispatch(changeSettings({cards: cards, time: time, maxMistakes: maxMistakes}));
+                            props.handleClose();
+                        }}>Save settings</button>
                 </div>
             </div>
         </div>

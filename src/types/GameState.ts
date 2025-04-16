@@ -1,4 +1,5 @@
 import Card from "./Card";
+import GameSettings from "./GameSettings";
 
 export default interface GameState {
     score: number,
@@ -6,5 +7,6 @@ export default interface GameState {
     flippedIds: number[],
     foundCards: number[],
     mistakes: number,
-    gameOver: boolean
+    gameOver: boolean,
+    settings: GameSettings
 }
