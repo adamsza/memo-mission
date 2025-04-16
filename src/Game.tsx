@@ -58,9 +58,6 @@ function Game({ children }: { children: ReactNode }) {
 
     return (
         <GameContext.Provider value={{
-            cards,
-            mistakes,
-            matches: foundCards.length / 2,
             remainingTime: timer.remainingTime,
             restartGame,
             handleCardClick

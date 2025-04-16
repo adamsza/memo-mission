@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
-import GameStats from "../types/GameStats";
 
-interface GameContext extends GameStats{
+interface GameContext {
+    remainingTime: number
     restartGame: () => void,
     handleCardClick: (id: number) => void
 }
