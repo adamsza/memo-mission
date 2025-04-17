@@ -1,6 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { incrementElapsedTime } from "../stores/gameSlice";
 
 interface TimerInterface {
     timerActive: boolean,
@@ -8,20 +6,19 @@ interface TimerInterface {
     stopTimer: () => void,
 }
 
-export default function useTimer(): TimerInterface {
+export default function useTimer({ onTick }: { onTick: () => void }): TimerInterface {
     const [timerActive, setTimerActive] = useState(false);
     const timerRef = useRef(0);
-    const dispatch = useDispatch();
 
-    const startTimer= useCallback(() => {
+    const startTimer = useCallback(() => {
         clearInterval(timerRef.current);
         setTimerActive(true);
         timerRef.current = setInterval(() => {
-            dispatch(incrementElapsedTime());
+            onTick();
         }, 1000);
-    }, [dispatch])
-    
-    const stopTimer= useCallback(() => {
+    }, [onTick])
+
+    const stopTimer = useCallback(() => {
         setTimerActive(false);
         clearInterval(timerRef.current);
     }, [])

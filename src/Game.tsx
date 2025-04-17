@@ -2,13 +2,13 @@ import { ReactNode, useCallback, useEffect } from 'react';
 import useTimer from './hooks/useTimer';
 import { GameContext } from './context/GameContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetGame, endGame, flipCard, matchCards, addMistake, flipCardsBack } from './stores/gameSlice';
+import { resetGame, endGame, flipCard, matchCards, addMistake, flipCardsBack, incrementElapsedTime } from './stores/gameSlice';
 import { RootState } from './stores/store';
 
 function Game({ children }: { children: ReactNode }) {
     const { gameOver, mistakes, flippedIds, foundCards, cards, settings, elapsedTime } = useSelector((state: RootState) => state.game);
     const dispatch = useDispatch();
-    const { timerActive, startTimer, stopTimer}= useTimer();
+    const { timerActive, startTimer, stopTimer}= useTimer({onTick: () => dispatch(incrementElapsedTime())});
     
     const stopGame = useCallback(() => {
         stopTimer();
