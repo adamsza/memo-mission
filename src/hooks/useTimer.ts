@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { incrementElapsedTime } from "../stores/gameSlice";
 
@@ -13,18 +13,18 @@ export default function useTimer(): TimerInterface {
     const timerRef = useRef(0);
     const dispatch = useDispatch();
 
-    function startTimer(){
+    const startTimer= useCallback(() => {
         clearInterval(timerRef.current);
         setTimerActive(true);
         timerRef.current = setInterval(() => {
             dispatch(incrementElapsedTime());
         }, 1000);
-    }
+    }, [dispatch])
     
-    function stopTimer() {
+    const stopTimer= useCallback(() => {
         setTimerActive(false);
         clearInterval(timerRef.current);
-    }
+    }, [])
 
     return {
         timerActive,
