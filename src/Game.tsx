@@ -6,38 +6,24 @@ import { resetScore, resetGame, endGame, flipCard, matchCards, addMistake, flipC
 import { RootState } from './stores/store';
 
 function Game({ children }: { children: ReactNode }) {
-    const { gameOver, mistakes, flippedIds, foundCards, cards, settings } = useSelector((state: RootState) => state.game);
+    const { gameOver, mistakes, flippedIds, foundCards, cards, settings, elapsedTime } = useSelector((state: RootState) => state.game);
     const dispatch = useDispatch();
-
+    
     const stopGame = useCallback(() => {
         timer.stopTimer();
-        dispatch(endGame(timer.remainingTime));
+        dispatch(endGame());
     }, [dispatch]);
-
-    const timer = useTimer({ time: settings.time, timerEndedCallback: stopGame });
+    
+    const timer = useTimer();
 
     const startGame = useCallback(() => {
-        if (timer.remainingTime === settings.time)
+        if (elapsedTime === 0)
             timer.startTimer();
-    }, [settings, timer]);
+    }, [elapsedTime, timer]);
 
-    const handleCardClick = useCallback((id: number) => {
-        if (gameOver) return;
-        if (foundCards.includes(id) || flippedIds.includes(id) || flippedIds.length > 1) return;
-        if (!timer.timerActive) startGame();
-        dispatch(flipCard(id));
-    }, [gameOver, foundCards, flippedIds, timer.timerActive, startGame, dispatch])
-
-    const restartGame = useCallback(() => {
-        stopGame();
-        timer.resetTimer();
-        dispatch(resetGame(settings.cards));
-        dispatch(resetScore());
-    }, [dispatch, stopGame]);
-
-    useEffect(() => {
-        if (flippedIds.length > 1) {
-            const flippedCards = flippedIds.map(id => cards.find(card => card.id === id));
+    const checkCards = useCallback((id: number) => {
+        if (flippedIds.length > 0) {
+            const flippedCards = [cards.find(card => card.id === flippedIds[0]), cards.find(card => card.id === id)];
             if (flippedCards[0]?.emoji === flippedCards[1]?.emoji) {
                 dispatch(matchCards());
                 if (foundCards.length + 2 === cards.length) stopGame();
@@ -50,15 +36,32 @@ function Game({ children }: { children: ReactNode }) {
                 if (mistakes + 1 === settings.maxMistakes) stopGame();
             }
         }
-    }, [cards, dispatch, flippedIds, stopGame]);
+    }, [cards, dispatch, flippedIds, foundCards.length, mistakes, settings.maxMistakes, stopGame]);
+
+    const handleCardClick = useCallback((id: number) => {
+        if (gameOver) return;
+        if (foundCards.includes(id) || flippedIds.includes(id) || flippedIds.length > 1) return;
+        if (!timer.timerActive) startGame();
+        dispatch(flipCard(id));
+        checkCards(id);
+    }, [gameOver, foundCards, flippedIds, timer.timerActive, startGame, dispatch, checkCards])
+
+    const restartGame = useCallback(() => {
+        stopGame();
+        dispatch(resetGame());
+        dispatch(resetScore());
+    }, [dispatch, settings.time, stopGame]);
 
     useEffect(() => {
         restartGame();
     }, [settings, restartGame]);
 
+    useEffect(() => {
+        if(elapsedTime === settings.time) stopGame();
+    }, [elapsedTime, settings.time, stopGame])
+
     return (
         <GameContext.Provider value={{
-            remainingTime: timer.remainingTime,
             restartGame,
             handleCardClick
         }}>

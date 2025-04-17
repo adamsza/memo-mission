@@ -1,28 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { incrementElapsedTime } from "../stores/gameSlice";
 
 interface TimerInterface {
-    remainingTime: number,
     timerActive: boolean,
     startTimer: () => void,
     stopTimer: () => void,
-    resetTimer: () => void,
 }
 
-interface TimerProps{
-    time: number,
-    timerEndedCallback: () => void
-}
-
-export default function useTimer(props: TimerProps): TimerInterface {
-    const [remainingTime, setRemainingTime] = useState(props.time);
+export default function useTimer(): TimerInterface {
     const [timerActive, setTimerActive] = useState(false);
     const timerRef = useRef(0);
+    const dispatch = useDispatch();
 
-    function startTimer() {
+    function startTimer(){
         clearInterval(timerRef.current);
         setTimerActive(true);
         timerRef.current = setInterval(() => {
-            setRemainingTime(prevRemainingTime => prevRemainingTime - 1);
+            dispatch(incrementElapsedTime());
         }, 1000);
     }
     
@@ -30,20 +25,10 @@ export default function useTimer(props: TimerProps): TimerInterface {
         setTimerActive(false);
         clearInterval(timerRef.current);
     }
-    
-    function resetTimer() {
-        setRemainingTime(props.time);
-    }
-    
-    useEffect(()=>{
-        if(remainingTime === 0) props.timerEndedCallback();
-    }, [remainingTime]);
 
     return {
-        remainingTime,
         timerActive,
         startTimer,
         stopTimer,
-        resetTimer
     }
 }

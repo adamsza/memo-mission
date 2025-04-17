@@ -8,5 +8,6 @@ export default interface GameState {
     foundCards: number[],
     mistakes: number,
     gameOver: boolean,
+    elapsedTime: number,
     settings: GameSettings
 }

@@ -1,7 +1,6 @@
 import { createContext, useContext } from "react";
 
 interface GameContext {
-    remainingTime: number
     restartGame: () => void,
     handleCardClick: (id: number) => void
 }

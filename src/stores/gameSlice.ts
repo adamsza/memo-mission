@@ -12,6 +12,7 @@ const initialState: GameState = {
     foundCards: [],
     mistakes: 0,
     gameOver: true,
+    elapsedTime: 0,
     settings: {
         cards: 12,
         time: 60,
@@ -22,8 +23,8 @@ const initialState: GameState = {
 function createCards(emojis: string[]) {
     return emojis.reduce<Card[]>((arr: Card[], emoji: string) => {
         arr.push(
-            {id: arr.length + 1, emoji, flipped: false},
-            {id: arr.length + 2, emoji, flipped: false}
+            { id: arr.length + 1, emoji, flipped: false },
+            { id: arr.length + 2, emoji, flipped: false }
         )
         return arr;
     }, [])
@@ -36,16 +37,17 @@ const gameSlice = createSlice({
         resetScore: (state) => {
             state.score = 0;
         },
-        endGame: (state, action: PayloadAction<number>) => {
+        endGame: (state) => {
             state.gameOver = true;
-            state.score += action.payload * (state.settings.time / 60) * 10;
+            state.score += (state.settings.time-state.elapsedTime) * (state.settings.time / 60) * 10;
         },
-        resetGame: (state, action: PayloadAction<number>) => {
+        resetGame: (state) => {
             state.gameOver = false;
             state.mistakes = 0;
             state.foundCards = [];
             state.flippedIds = [];
-            state.cards = shuffle(createCards(animalEmojis.slice(0, action.payload)))
+            state.cards = shuffle(createCards(animalEmojis.slice(0, state.settings.cards)));
+            state.elapsedTime = 0;
         },
         matchCards: (state) => {
             state.foundCards = [...state.foundCards, ...state.flippedIds.slice(0, 2)];
@@ -58,14 +60,17 @@ const gameSlice = createSlice({
         },
         flipCard: (state, action: PayloadAction<number>) => {
             state.cards = state.cards.map(card => card.id === action.payload ? { ...card, flipped: true } : card);
-            state.flippedIds = [...state.flippedIds, action.payload];
+            state.flippedIds.push(action.payload);
         },
         flipCardsBack: (state) => {
             state.cards = state.cards.map(card => state.flippedIds.includes(card.id) ? { ...card, flipped: false } : card);
             state.flippedIds = []
         },
         changeSettings: (state, action: PayloadAction<GameSettings>) => {
-            state.settings = action.payload
+            state.settings = action.payload;
+        },
+        incrementElapsedTime: (state) => {
+            state.elapsedTime += 1;
         }
     }
 })
@@ -78,7 +83,8 @@ export const {
     addMistake,
     flipCard,
     flipCardsBack,
-    changeSettings
+    changeSettings,
+    incrementElapsedTime
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
