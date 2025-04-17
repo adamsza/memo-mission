@@ -4,6 +4,7 @@ import { shuffle } from "../utils/ShuffleAlgorithm";
 import { animalEmojis } from "../data/emojis";
 import GameState from "../types/GameState";
 import GameSettings from "../types/GameSettings";
+import config from "../config";
 
 const initialState: GameState = {
     score: 0,
@@ -14,9 +15,9 @@ const initialState: GameState = {
     gameOver: true,
     elapsedTime: 0,
     settings: {
-        cards: 12,
-        time: 60,
-        maxMistakes: 16
+        cards: config.cards,
+        time: config.time,
+        maxMistakes: config.maxMistakes
     }
 }
 
@@ -39,7 +40,7 @@ const gameSlice = createSlice({
         },
         endGame: (state) => {
             state.gameOver = true;
-            state.score += (state.settings.time-state.elapsedTime) * (state.settings.time / 60) * 10;
+            state.score += (state.settings.time-state.elapsedTime) * (state.settings.time / config.time) * 10;
         },
         resetGame: (state) => {
             state.gameOver = false;
@@ -48,6 +49,7 @@ const gameSlice = createSlice({
             state.flippedIds = [];
             state.cards = shuffle(createCards(animalEmojis.slice(0, state.settings.cards)));
             state.elapsedTime = 0;
+            resetScore();
         },
         matchCards: (state) => {
             state.foundCards = [...state.foundCards, ...state.flippedIds.slice(0, 2)];

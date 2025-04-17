@@ -2,7 +2,7 @@ import { ReactNode, useCallback, useEffect } from 'react';
 import useTimer from './hooks/useTimer';
 import { GameContext } from './context/GameContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetScore, resetGame, endGame, flipCard, matchCards, addMistake, flipCardsBack } from './stores/gameSlice';
+import { resetGame, endGame, flipCard, matchCards, addMistake, flipCardsBack } from './stores/gameSlice';
 import { RootState } from './stores/store';
 
 function Game({ children }: { children: ReactNode }) {
@@ -48,7 +48,6 @@ function Game({ children }: { children: ReactNode }) {
     const restartGame = useCallback(() => {
         stopGame();
         dispatch(resetGame());
-        dispatch(resetScore());
     }, [dispatch, stopGame]);
 
     useEffect(() => {
