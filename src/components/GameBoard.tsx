@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
-import CardBody from "./components/CardBody"
-import { useGameContext } from "./context/GameContext";
-import { RootState } from "./stores/store";
+import CardBody from "./CardBody"
+import { useGameContext } from "../context/GameContext";
+import { RootState } from "../stores/store";
 
 function GameBoard() {
     const { handleCardClick } = useGameContext();
