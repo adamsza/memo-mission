@@ -1,71 +1,65 @@
 import { ReactNode, useCallback, useEffect } from 'react';
 import useTimer from './hooks/useTimer';
 import { GameContext } from './context/GameContext';
-import { useGameState } from './hooks/useGameState';
-import { useDispatch } from 'react-redux';
-import { decreaseScore, increaseScore, resetScore } from './stores/gameSlice';
-import GameSettings from './types/GameSettings';
+import { useDispatch, useSelector } from 'react-redux';
+import { resetGame, endGame, flipCard, matchCards, addMistake, flipCardsBack, incrementElapsedTime } from './stores/gameSlice';
+import { RootState } from './stores/store';
 
-function Game({ gameSettings, children }: { gameSettings: GameSettings, children: ReactNode }) {
-    const { cards, flippedIds, foundCards, mistakes, gameOver, resetGame, matchCards, addMistake, flipCard, endGame } = useGameState({ gameSettings });
+function Game({ children }: { children: ReactNode }) {
+    const { gameOver, mistakes, flippedIds, foundCards, cards, settings, elapsedTime } = useSelector((state: RootState) => state.game);
     const dispatch = useDispatch();
-    const handleCardClick = useCallback((id: number) => {
-        if (gameOver) return;
-        if (foundCards.includes(id) || flippedIds.includes(id) || flippedIds.length > 1) return;
-        if (!timer.timerActive) startGame();
-        flipCard(id);
-    }, [flippedIds, gameOver])
-
-    function startGame() {
-        if (timer.remainingTime === gameSettings.time)
-            timer.startTimer();
-    }
-
+    const { timerActive, startTimer, stopTimer}= useTimer({onTick: () => dispatch(incrementElapsedTime())});
+    
     const stopGame = useCallback(() => {
-        timer.stopTimer();
-        endGame();
-    }, []);
+        stopTimer();
+        dispatch(endGame());
+    }, [dispatch, stopTimer]);
 
-    const timer = useTimer({ time: gameSettings.time, timerEndedCallback: stopGame });
+    const startGame = useCallback(() => {
+        if (elapsedTime === 0)
+            startTimer();
+    }, [elapsedTime, startTimer]);
 
-    function restartGame() {
-        stopGame();
-        timer.resetTimer();
-        resetGame();
-        dispatch(resetScore());
-    }
-
-    useEffect(() => {
-        if (flippedIds.length > 1) {
-            const flippedCards = flippedIds.map(id => cards.find(card => card.id === id));
+    const checkCards = useCallback((id: number) => {
+        if (flippedIds.length > 0) {
+            const flippedCards = [cards.find(card => card.id === flippedIds[0]), cards.find(card => card.id === id)];
             if (flippedCards[0]?.emoji === flippedCards[1]?.emoji) {
-                matchCards();
-                dispatch(increaseScore(50));
+                dispatch(matchCards());
                 if (foundCards.length + 2 === cards.length) stopGame();
             }
             else {
-                addMistake();
-                if(mistakes + 1 === gameSettings.maxMistakes) stopGame();
-                dispatch(decreaseScore(10));
+                dispatch(addMistake());
+                setTimeout(() => {
+                    dispatch(flipCardsBack());
+                }, 1000);
+                if (mistakes + 1 === settings.maxMistakes) stopGame();
             }
         }
-    }, [flippedIds]);
+    }, [cards, dispatch, flippedIds, foundCards.length, mistakes, settings.maxMistakes, stopGame]);
+
+    const handleCardClick = useCallback((id: number) => {
+        if (gameOver) return;
+        if (foundCards.includes(id) || flippedIds.includes(id) || flippedIds.length > 1) return;
+        if (!timerActive) startGame();
+        dispatch(flipCard(id));
+        checkCards(id);
+    }, [gameOver, foundCards, flippedIds, timerActive, startGame, dispatch, checkCards])
+
+    const restartGame = useCallback(() => {
+        stopGame();
+        dispatch(resetGame());
+    }, [dispatch, stopGame]);
 
     useEffect(() => {
         restartGame();
-    }, [gameSettings]);
+    }, [settings, restartGame]);
 
     useEffect(() => {
-        if (gameOver === true)
-            dispatch(increaseScore(timer.remainingTime * (gameSettings.time / 60) * 10));
-    }, [gameOver])
+        if(elapsedTime === settings.time) stopGame();
+    }, [elapsedTime, settings.time, stopGame])
 
     return (
         <GameContext.Provider value={{
-            cards,
-            mistakes,
-            matches: foundCards.length / 2,
-            remainingTime: timer.remainingTime,
             restartGame,
             handleCardClick
         }}>
