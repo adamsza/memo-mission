@@ -11,7 +11,7 @@ interface CardProps {
 function CardBody(props: CardProps) {
 
     return (
-        <div className="flex justify-center h-[150px] w-[100px]" onClick={() => props.onClick(props.card.id)}>
+        <div className="flex justify-center h-[150px] w-[100px] cursor-pointer" onClick={() => props.onClick(props.card.id)}>
             <AnimatePresence>
                 {props.card.flipped ?
                     <motion.div
