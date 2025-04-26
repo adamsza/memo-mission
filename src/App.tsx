@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Header } from './Header'
-import SettingsModal from './components/SettingsModal';
-import GameBoard from './components/GameBoard';
-import Game from './Game';
-import { Provider } from 'react-redux';
-import { store } from './stores/store';
+import { useState } from "react";
+import { Header } from "./Header";
+import SettingsModal from "./components/SettingsModal";
+import GameBoard from "./components/GameBoard";
+import Game from "./Game";
+import { Provider } from "react-redux";
+import { store } from "./stores/store";
 
 function App() {
   const [modal, setModal] = useState(false);
@@ -19,7 +19,7 @@ function App() {
         {modal && <SettingsModal handleClose={() => setModal(false)} />}
       </Provider>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

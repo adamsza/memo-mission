@@ -40,21 +40,24 @@ body {
 
 @font-face {
   font-family: "Gilroy";
-  src: local("Gilroy"),
-   url("./assets/fonts/Gilroy-Regular.ttf") format("truetype");
- }
+  src:
+    local("Gilroy"),
+    url("./assets/fonts/Gilroy-Regular.ttf") format("truetype");
+}
 
 @font-face {
   font-family: "Gilroy-Black";
-  src: local("Gilroy-Black"),
-   url("./assets/fonts/Gilroy-Black.ttf") format("truetype");
- }
+  src:
+    local("Gilroy-Black"),
+    url("./assets/fonts/Gilroy-Black.ttf") format("truetype");
+}
 
 @font-face {
   font-family: "Gilroy-Bold";
-  src: local("Gilroy-Bold"),
-   url("./assets/fonts/Gilroy-Bold.ttf") format("truetype");
- }
+  src:
+    local("Gilroy-Bold"),
+    url("./assets/fonts/Gilroy-Bold.ttf") format("truetype");
+}
 
 @media (prefers-color-scheme: light) {
   :root {

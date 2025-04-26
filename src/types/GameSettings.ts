@@ -1,5 +1,5 @@
 export default interface GameSettings {
-    cards: number,
-    time: number,
-    maxMistakes: number
+  cards: number;
+  time: number;
+  maxMistakes: number;
 }
