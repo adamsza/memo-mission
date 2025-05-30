@@ -10,8 +10,8 @@ import {
   addMistake,
   flipCardsBack,
   incrementElapsedTime,
+  gameSelector,
 } from "./stores/gameSlice";
-import { RootState } from "./stores/store";
 
 function Game({ children }: { children: ReactNode }) {
   const {
@@ -22,7 +22,7 @@ function Game({ children }: { children: ReactNode }) {
     cards,
     settings,
     elapsedTime,
-  } = useSelector((state: RootState) => state.game);
+  } = useSelector(gameSelector);
   const dispatch = useDispatch();
   const { timerActive, startTimer, stopTimer } = useTimer({
     onTick: () => dispatch(incrementElapsedTime()),
