@@ -1,5 +1,5 @@
 interface IProps {
-  children: string;
+  readonly children: string;
 }
 
 function CardFront(props: IProps) {
