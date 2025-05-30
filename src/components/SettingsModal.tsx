@@ -7,7 +7,7 @@ import { changeName } from "../stores/userSlice";
 import { changeSettings } from "../stores/gameSlice";
 
 interface SettingsModalProps {
-  handleClose: () => void;
+  readonly handleClose: () => void;
 }
 
 function SettingsModal(props: SettingsModalProps) {

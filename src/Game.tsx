@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect } from "react";
+import { ReactNode, useCallback, useEffect, useMemo } from "react";
 import useTimer from "./hooks/useTimer";
 import { GameContext } from "./context/GameContext";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,10 +10,10 @@ import {
   addMistake,
   flipCardsBack,
   incrementElapsedTime,
+  gameSelector,
 } from "./stores/gameSlice";
-import { RootState } from "./stores/store";
 
-function Game({ children }: { children: ReactNode }) {
+function Game({ children }: { readonly children: ReactNode }) {
   const {
     gameOver,
     mistakes,
@@ -22,7 +22,7 @@ function Game({ children }: { children: ReactNode }) {
     cards,
     settings,
     elapsedTime,
-  } = useSelector((state: RootState) => state.game);
+  } = useSelector(gameSelector);
   const dispatch = useDispatch();
   const { timerActive, startTimer, stopTimer } = useTimer({
     onTick: () => dispatch(incrementElapsedTime()),
@@ -104,15 +104,15 @@ function Game({ children }: { children: ReactNode }) {
     if (elapsedTime === settings.time) stopGame();
   }, [elapsedTime, settings.time, stopGame]);
 
+  const contextProps = useMemo(() => {
+    return {
+      restartGame,
+      handleCardClick,
+    };
+  }, [restartGame, handleCardClick]);
+
   return (
-    <GameContext.Provider
-      value={{
-        restartGame,
-        handleCardClick,
-      }}
-    >
-      {children}
-    </GameContext.Provider>
+    <GameContext.Provider value={contextProps}>{children}</GameContext.Provider>
   );
 }
 

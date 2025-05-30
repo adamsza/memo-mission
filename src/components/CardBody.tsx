@@ -4,13 +4,13 @@ import CardBack from "./CardBack";
 import CardFront from "./CardFront";
 
 interface CardProps {
-  card: Card;
-  onClick: (id: number) => void;
+  readonly card: Card;
+  readonly onClick: (id: number) => void;
 }
 
 function CardBody(props: CardProps) {
   return (
-    <div
+    <button
       className="flex justify-center h-[150px] w-[100px] cursor-pointer"
       onClick={() => props.onClick(props.card.id)}
     >
@@ -38,7 +38,7 @@ function CardBody(props: CardProps) {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </button>
   );
 }
 

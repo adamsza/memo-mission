@@ -2,7 +2,7 @@ import { faGear, faRepeat } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGameContext } from "../context/GameContext";
 
-export function Menu({ openSettings }: { openSettings: () => void }) {
+export function Menu({ openSettings }: { readonly openSettings: () => void }) {
   const gameState = useGameContext();
   return (
     <div className="w-fit">

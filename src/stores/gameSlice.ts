@@ -5,6 +5,7 @@ import { animalEmojis } from "../data/emojis";
 import GameState from "../types/GameState";
 import GameSettings from "../types/GameSettings";
 import config from "../config";
+import { RootState } from "./store";
 
 const initialState: GameState = {
   score: 0,
@@ -20,6 +21,8 @@ const initialState: GameState = {
     maxMistakes: config.maxMistakes,
   },
 };
+
+export const gameSelector = (state: RootState) => state.game;
 
 function createCards(emojis: string[]) {
   return emojis.reduce<Card[]>((arr: Card[], emoji: string) => {
