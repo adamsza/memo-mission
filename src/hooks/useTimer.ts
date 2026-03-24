@@ -12,10 +12,13 @@ export default function useTimer({
   onTick: () => void;
 }): TimerInterface {
   const [timerActive, setTimerActive] = useState(false);
-  const timerRef = useRef(0);
+  const timerRef = useRef<NodeJS.Timeout | number | null>(null);
 
   const startTimer = useCallback(() => {
-    clearInterval(timerRef.current);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     setTimerActive(true);
     timerRef.current = setInterval(() => {
       onTick();
@@ -24,7 +27,10 @@ export default function useTimer({
 
   const stopTimer = useCallback(() => {
     setTimerActive(false);
-    clearInterval(timerRef.current);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
   }, []);
 
   return {
